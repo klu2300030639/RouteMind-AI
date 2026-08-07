@@ -1,0 +1,6 @@
+vehicle_id,model,driver_id,capacity_kg,max_distance_km,fuel_type,status,current_lat,current_lng
+VH-101,Freightliner Custom Van,DRV-01,1200,350,DIESEL,ACTIVE,41.8781,-87.6298
+VH-102,Ford E-Transit Electric,DRV-02,1000,250,ELECTRIC,ACTIVE,41.8818,-87.6501
+VH-103,Isuzu NPR Box Truck,DRV-03,2500,500,DIESEL,ACTIVE,41.8671,-87.6259
+VH-104,Mercedes Sprinter EV,DRV-04,1100,280,ELECTRIC,MAINTENANCE,41.9087,-87.6774
+VH-105,Volvo VNR Electric Heavy,DRV-05,4000,450,HYBRID,ACTIVE,41.8762,-87.6698

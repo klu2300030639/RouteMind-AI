@@ -1,0 +1,11 @@
+order_id,customer_name,address,latitude,longitude,weight_kg,time_window_start,time_window_end,priority,status
+ORD-8001,Metro Logistics Hub,"101 Industrial Pkwy, Chicago, IL",41.8781,-87.6298,450,08:00,12:00,HIGH,PENDING
+ORD-8002,Apex Retail Store #14,"540 N Michigan Ave, Chicago, IL",41.8923,-87.6241,120,09:00,13:00,NORMAL,PENDING
+ORD-8003,Summit Pharma Distribution,"220 W Adams St, Chicago, IL",41.8795,-87.6352,85,08:30,11:00,URGENT,PENDING
+ORD-8004,Global Foods Market,"1200 S Wabash Ave, Chicago, IL",41.8671,-87.6259,680,10:00,15:00,NORMAL,PENDING
+ORD-8005,Midwest Electronics Hub,"900 W Madison St, Chicago, IL",41.8818,-87.6501,310,11:00,16:00,HIGH,PENDING
+ORD-8006,Horizon Medical Supply,"1700 W Van Buren St, Chicago, IL",41.8762,-87.6698,140,09:30,12:30,URGENT,PENDING
+ORD-8007,Urban Outfitters Depot,"1500 N Damen Ave, Chicago, IL",41.9087,-87.6774,290,12:00,17:00,NORMAL,PENDING
+ORD-8008,Lincoln Park Market,"2000 N Clark St, Chicago, IL",41.9182,-87.6375,420,10:00,14:00,HIGH,PENDING
+ORD-8009,West Loop Tech Corp,"300 S Riverside Plaza, Chicago, IL",41.8778,-87.6389,95,08:00,11:30,NORMAL,PENDING
+ORD-8010,South Shore Fresh Mart,"2300 E 71st St, Chicago, IL",41.7659,-87.5681,530,13:00,17:30,NORMAL,PENDING

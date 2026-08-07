@@ -1,0 +1,5 @@
+event_id,type,severity,latitude,longitude,radius_km,delay_mins,description,status
+EVT-901,CONSTRUCTION,HIGH,41.885,-87.63,1.2,25,I-90 Express Lane Closure for Paving,ACTIVE
+EVT-902,ACCIDENT,CRITICAL,41.875,-87.64,0.8,40,Multi-vehicle collision on Eisenhower Expy,ACTIVE
+EVT-903,WEATHER,MEDIUM,41.91,-87.67,2.5,15,Localized Heavy Rainfall & Low Visibility,ACTIVE
+EVT-904,ROADBLOCK,CRITICAL,41.865,-87.62,0.5,30,Emergency Utility Repair on Michigan Ave,ACTIVE

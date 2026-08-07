@@ -1,0 +1,6 @@
+driver_id,name,phone,shift_start,shift_end,rating,vehicle_assigned,status
+DRV-01,Marcus Vance,+1 (312) 555-0142,07:30,16:30,4.9,VH-101,ON_ROUTE
+DRV-02,Elena Rostova,+1 (312) 555-0188,08:00,17:00,4.95,VH-102,ON_ROUTE
+DRV-03,David Kalu,+1 (312) 555-0219,07:00,16:00,4.85,VH-103,ON_ROUTE
+DRV-04,Sarah Chen,+1 (312) 555-0311,09:00,18:00,4.78,VH-104,OFF_DUTY
+DRV-05,Carlos Mendez,+1 (312) 555-0455,08:00,17:00,4.92,VH-105,ON_ROUTE
