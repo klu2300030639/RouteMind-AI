@@ -20,7 +20,7 @@ class VRPOptimizer:
         self.vehicles = [v for v in vehicles if v.status == 'ACTIVE']
         self.drivers_map = {d.driver_id: d.name for d in drivers}
         
-    def solve(()) -> OptimizationResponse:
+    def solve(self) -> OptimizationResponse:
         if not self.orders or not self.vehicles:
             return OptimizationResponse(
                 routes=[],
@@ -98,7 +98,7 @@ class VRPOptimizer:
                     if node != 0: # skip depot
                         order = self.orders[node - 1]
                         route_weight += order.weight_kg
-                        arrival_hr = 8 + (route_dist / 40000.0) * 2 # approx travel speed
+                        arrival_hr = 8 + (route_dist / 40000.0) * 2
                         arr_str = f'{int(arrival_hr):02d}:{int((arrival_hr % 1) * 60):02d}'
                         
                         route_stops.append(RouteStop(
