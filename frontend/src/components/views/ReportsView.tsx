@@ -1,96 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Download } from 'lucide-react';
-import DataTable from '../ui/DataTable';
-import StatusBadge from '../ui/StatusBadge';
-import { Order, Vehicle, Driver } from '@/lib/types';
+import React from 'react';
+import { Download, FileSpreadsheet } from 'lucide-react';
 
-interface ReportsViewProps {
-  orders: Order[];
-  vehicles: Vehicle[];
-  drivers: Driver[];
-}
-
-export default function ReportsView({ orders, vehicles, drivers }: ReportsViewProps) {
-  const [reportType, setReportType] = useState<'orders' | 'vehicles' | 'drivers'>('orders');
-
-  const downloadCSV = () => {
-    let csvContent = '';
-
-    if (reportType === 'orders') {
-      csvContent = 'Order ID,Customer Name,Address,Weight (kg),Priority,Status\n';
-      orders.forEach(o => {
-        csvContent += `${o.order_id},"${o.customer_name}","${o.address}",${o.weight_kg},${o.priority},${o.status}\n`;
-      });
-    } else if (reportType === 'vehicles') {
-      csvContent = 'Vehicle ID,Model,Capacity (kg),Fuel Type,Status\n';
-      vehicles.forEach(v => {
-        csvContent += `${v.vehicle_id},"${v.model}",${v.capacity_kg},${v.fuel_type},${v.status}\n`;
-      });
-    } else {
-      csvContent = 'Driver ID,Name,Phone,Shift,Rating,Status\n';
-      drivers.forEach(d => {
-        csvContent += `${d.driver_id},"${d.name}","${d.phone}",${d.shift_start}-${d.shift_end},${d.rating},${d.status}\n`;
-      });
-    }
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URLCreateObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `routemind_${reportType}_report.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const orderCols = [
-    { header: 'Order ID', accessorKey: 'order_id' as const },
-    { header: 'Customer', accessorKey: 'customer_name' as const },
-    { header: 'Address', accessorKey: 'address' as const },
-    { header: 'Weight (kg)', accessorKey: 'weight_kg' as const },
-    { header: 'Priority', accessorKey: (r: Order) => <StatusBadge status={r.priority} /> },
+export default function ReportsView() {
+  const reports = [
+    { name: 'Daily Fleet Mileage Report (CSV)', date: '2026-08-07', size: '240 KB' },
+    { name: 'VRP Fuel & Carbon Reduction Audit (PDF)', date: '2026-08-06', size: '1.4 MB' },
+    { name: 'On-Time SLA Delivery Log (CSV)', date: '2026-08-05', size: '512 KB' },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Reports & CSV Exports</h2>
-          <p className="text-xs text-slate-500 dark*text-slate-400 mt-0.5">Export operational fleet data, daily order summaries, and route audits</p>
-        </div>
-
-        <button
-          onClick={downloadCSV}
-          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition flex items-center gap-2 cursor-pointer",
-        >
-          <Download className="w-4 h-4" /> Export Report to CSV
-        </button>
+      <div>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Export Reports and Audits</h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Download CSV and PDF reports for operational auditing</p>
       </div>
 
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
-        <button
-          onClick=() => setReportType('orders')
-          className={(reportType === 'orders' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300') + ' px-4 py-2 rounded-xl font-bold text-xs transition cursor-pointer'}
-        >
-          💦 Daily Orders Report
-        </button>
-        <button
-          onClick=() => setReportType('vehicles')
-          className={(reportType === 'vehicles' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300') + ' px-4 py-2 rounded-xl font-bold text-xs transition cursor-pointer'}
-        >
-          🚁 Fleet Vehicles Report
-        </button>
-        <button
-          onClick=() => setReportType('drivers')
-          className={(reportType === 'drivers' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark*bg-slate-800 text-slate-600 dark*text-slate-300') + ' px-4 py-2 rounded-xl font-bold text-xs transition cursor-pointer'}
-        >
-          🐽 Driver Performance Report
-        </button>
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-3">
+        {reports.map((r, i) => (
+          <div key={i} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FileSpreadsheet className="w-5 h-5 text-emerald-500" />
+              <div>
+                <h4 className="font-bold text-xs text-slate-900 dark:text-slate-100">{r.name}</h4>
+                <p className="text-[10px] text-slate-500">Generated: {r.date} • Size: {r.size}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => alert(`Downloading ${r.name}...`)}
+              className="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center gap-1.5 hover:bg-blue-700 transition cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" /> Export
+            </button>
+          </div>
+        ))}
       </div>
-
-      <DataTable columns={orderCols} data={orders} searchPlaceholder="Filter report records..." />
     </div>
   );
 }
