@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import LeafletMap from '../maps/LeafletMap';
+import SatelliteLeafletMap from '../maps/SatelliteLeafletMap';
 import { api } from '@/lib/api';
 
 export default function RoutePlannerView() {
   const [selectedFleet, setSelectedFleet] = useState('Medium Duty (Class B)');
   const [isSolving, setIsSolving] = useState(false);
+  const [showCsvModal, setShowCsvModal] = useState(false);
   const [optResults, setOptResults] = useState({
     distance: '1,245',
     duration: '24h 30m',
@@ -55,11 +56,17 @@ export default function RoutePlannerView() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 hover:bg-slate-50 transition cursor-pointer">
+          <button
+            onClick={() => setShowCsvModal(true)}
+            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 hover:bg-slate-50 transition cursor-pointer"
+          >
             <span className="material-symbols-outlined text-[18px]">upload_file</span>
             <span>CSV Upload</span>
           </button>
-          <button className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 hover:bg-slate-50 transition cursor-pointer">
+          <button
+            onClick={() => alert('Reset optimization parameters to default.')}
+            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 hover:bg-slate-50 transition cursor-pointer"
+          >
             <span className="material-symbols-outlined text-[18px]">restart_alt</span>
             <span>Reset</span>
           </button>
@@ -73,6 +80,28 @@ export default function RoutePlannerView() {
           </button>
         </div>
       </div>
+
+      {/* CSV Upload Modal */}
+      {showCsvModal && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100">Upload Orders Dataset (CSV)</h3>
+              <button onClick={() => setShowCsvModal(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <p className="text-xs text-slate-500">Select a delivery manifest CSV containing columns: order_id, lat, lng, weight_lbs, time_window_start, time_window_end.</p>
+            <div className="border-2 border-dashed border-blue-400/60 rounded-2xl p-8 text-center bg-blue-50/50 dark:bg-blue-950/20 cursor-pointer">
+              <span className="material-symbols-outlined text-4xl text-blue-600">cloud_upload</span>
+              <p className="font-bold text-xs text-slate-800 dark:text-slate-200 mt-2">Click or Drag CSV Manifest File Here</p>
+              <p className="text-[11px] text-slate-400 mt-1">Supports data/orders.csv (up to 500 stops)</p>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setShowCsvModal(false)} className="px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-800">Cancel</button>
+              <button onClick={() => { setShowCsvModal(false); alert('Successfully imported orders.csv dataset!'); }} className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white">Import & Process</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Top Grid (3 Columns) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -116,9 +145,9 @@ export default function RoutePlannerView() {
           </div>
         </div>
 
-        {/* Center: Live Traffic Map */}
+        {/* Center: Live Satellite Map */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
-          <LeafletMap height="280px" />
+          <SatelliteLeafletMap height="280px" />
         </div>
 
         {/* Right: Optimization Results */}
@@ -195,9 +224,9 @@ export default function RoutePlannerView() {
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">Route Schedule</h3>
-            <a href="#" className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">download</span> Export
-            </a>
+            <button onClick={() => alert('Exporting Route Schedule to CSV...')} className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer">
+              <span className="material-symbols-outlined text-[16px]">download</span> Export CSV
+            </button>
           </div>
 
           <div className="w-full overflow-x-auto">

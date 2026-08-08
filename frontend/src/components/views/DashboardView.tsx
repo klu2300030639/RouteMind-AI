@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
-import LeafletMap from '../maps/LeafletMap';
+import React, { useState } from 'react';
+import SatelliteLeafletMap from '../maps/SatelliteLeafletMap';
 
 export default function DashboardView() {
+  const [alertDismissed, setAlertDismissed] = useState(false);
+  const [rerouteApproved, setRerouteApproved] = useState(false);
+
   const activeRoutes = [
     { id: 'RT-8802', driver: 'John Smith', initials: 'JS', bg: 'bg-blue-600', vehicle: 'TRK-442 (Van)', status: 'In Transit', color: 'emerald', eta: '14:30 EST' },
     { id: 'RT-8803', driver: 'Alice Doe', initials: 'AD', bg: 'bg-amber-600', vehicle: 'TRK-109 (Heavy)', status: 'Delayed', color: 'amber', eta: '15:45 EST (+15m)' },
@@ -24,11 +27,6 @@ export default function DashboardView() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-2" />
             System Optimal
           </span>
-          <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 hover:bg-slate-50 transition cursor-pointer">
-            <span className="material-symbols-outlined text-[16px]">calendar_today</span>
-            <span>Today</span>
-            <span className="material-symbols-outlined text-[16px]">expand_more</span>
-          </button>
         </div>
       </div>
 
@@ -89,83 +87,79 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Middle Section: Live Fleet Map + AI Card & Quick Actions */}
+      {/* Middle Section: Satellite Map + AI Alert Card & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Map Container */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center justify-between mb-3">
+        {/* Satellite Map Container */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
             <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <span className="material-symbols-outlined text-blue-600">map</span>
-              <span>Live Fleet Topology</span>
+              <span className="material-symbols-outlined text-blue-600">satellite_alt</span>
+              <span>Live Fleet Satellite Topology</span>
             </h3>
-            <div className="flex items-center gap-2">
-              <button className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 transition cursor-pointer">
-                <span className="material-symbols-outlined text-[18px]">filter_list</span>
-              </button>
-              <button className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 transition cursor-pointer">
-                <span className="material-symbols-outlined text-[18px]">layers</span>
-              </button>
-            </div>
           </div>
-          <LeafletMap height="400px" />
+          <SatelliteLeafletMap height="400px" />
         </div>
 
         {/* Right Side Cards */}
         <div className="space-y-4">
           {/* AI Recommendation Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <span className="material-symbols-outlined text-[20px]">smart_toy</span>
+          {!alertDismissed && (
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <span className="material-symbols-outlined text-[20px]">smart_toy</span>
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-slate-100">Route Deviation Detected</h4>
+                  <p className="text-[11px] text-slate-500">High confidence intervention recommended for Route NY-402.</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-slate-100">Route Deviation Detected</h4>
-                <p className="text-[11px] text-slate-500">High confidence intervention recommended for Route NY-402.</p>
-              </div>
-            </div>
 
-            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs space-y-1">
-              <div className="flex justify-between font-bold text-slate-800 dark:text-slate-200">
-                <span>Vehicle ID: TRK-882</span>
-                <span className="text-rose-600 font-extrabold">Traffic Incident</span>
+              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs space-y-1">
+                <div className="flex justify-between font-bold text-slate-800 dark:text-slate-200">
+                  <span>Vehicle ID: TRK-882</span>
+                  <span className="text-rose-600 font-extrabold">Traffic Incident</span>
+                </div>
+                <p className="text-slate-600 dark:text-slate-400 text-[11px]">Accident on I-95 South causing +45m delay. Rerouting via Route 1 saves 32m.</p>
               </div>
-              <p className="text-slate-600 dark:text-slate-400 text-[11px]">Accident on I-95 South causing +45m delay. Rerouting via Route 1 saves 32m.</p>
-            </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                onClick={() => alert('AI Reroute Approved! Vehicle TRK-882 re-routed.')}
-                className="py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center justify-center gap-1"
-              >
-                <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                <span>Approve Reroute</span>
-              </button>
-              <button
-                onClick={() => alert('Recommendation dismissed.')}
-                className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
-              >
-                Dismiss
-              </button>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={() => setRerouteApproved(true)}
+                  className={`py-2.5 rounded-xl font-bold text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1 ${
+                    rerouteApproved ? 'bg-emerald-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[16px]">{rerouteApproved ? 'check_circle' : 'check'}</span>
+                  <span>{rerouteApproved ? 'Reroute Approved!' : 'Approve Reroute'}</span>
+                </button>
+                <button
+                  onClick={() => setAlertDismissed(true)}
+                  className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Quick Actions 2x2 Grid */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
             <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Quick Actions</h4>
             <div className="grid grid-cols-2 gap-2">
-              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+              <button onClick={() => alert('Assigning driver to pending route...')} className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
                 <span className="material-symbols-outlined text-[22px] text-blue-600">person_add</span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Assign Driver</p>
               </button>
-              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+              <button onClick={() => alert('Dispatching emergency vehicle TRK-109...')} className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
                 <span className="material-symbols-outlined text-[22px] text-blue-600">local_shipping</span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Dispatch Vehicle</p>
               </button>
-              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+              <button onClick={() => alert('Downloading daily dispatch report PDF...')} className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
                 <span className="material-symbols-outlined text-[22px] text-blue-600">description</span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Generate Report</p>
               </button>
-              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+              <button onClick={() => alert('Connecting to 24/7 Support Desk...')} className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
                 <span className="material-symbols-outlined text-[22px] text-blue-600">support_agent</span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Contact Support</p>
               </button>
