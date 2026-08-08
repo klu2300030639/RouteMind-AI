@@ -1,40 +1,99 @@
 'use client';
 
-import React from 'react';
-import { MapPin, Navigation } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
 
 interface LeafletMapProps {
   height?: string;
+  center?: [number, number];
+  zoom?: number;
 }
 
-export default function LeafletMap({ height = '400px' }: LeafletMapProps) {
+export default function LeafletMap({
+  height = '400px',
+  center = [40.7128, -74.0060],
+  zoom = 12,
+}: LeafletMapProps) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const element = mapContainerRef.current;
+    if (!element) return;
+
+    import('leaflet').then((L) => {
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      });
+
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+      }
+
+      const map = L.map(element).setView(center, zoom);
+      mapInstanceRef.current = map;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const depotIcon = L.divIcon({
+        className: 'custom-depot-marker',
+        html: '<div style="background-color:#2563eb; color:white; width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(37,99,235,0.4); font-weight:bold; font-size:12px;">HQ</div>',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+      L.marker(center, { icon: depotIcon })
+        .addTo(map)
+        .bindPopup('<b>RouteMind Logistics HQ</b><br/>Distribution Center Alpha');
+
+      const stops: [number, number, string][] = [
+        [40.7589, -73.9851, 'Stop 1: Times Square Depot'],
+        [40.7829, -73.9654, 'Stop 2: Central Park Hub'],
+        [40.7061, -74.0088, 'Stop 3: Wall Street Financial Center'],
+        [40.7282, -73.9942, 'Stop 4: Union Square Market'],
+      ];
+
+      const routePoints: [number, number][] = [center];
+
+      stops.forEach(([lat, lng, name], index) => {
+        routePoints.push([lat, lng]);
+        const stopIcon = L.divIcon({
+          className: 'custom-stop-marker',
+          html: `<div style="background-color:#10b981; color:white; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; font-weight:bold; font-size:11px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">${index + 1}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13],
+        });
+        L.marker([lat, lng], { icon: stopIcon })
+          .addTo(map)
+          .bindPopup(`<b>${name}</b><br/>ETA: 10:${15 + index * 20} AM`);
+      });
+
+      routePoints.push(center);
+
+      L.polyline(routePoints, {
+        color: '#2563eb',
+        weight: 4,
+        opacity: 0.8,
+        dashArray: '8, 8',
+      }).addTo(map);
+    });
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [center, zoom]);
+
   return (
-    <div
-      style={{ height }}
-      className="w-full rounded-2xl bg-slate-900 border border-slate-800 relative overflow-hidden flex flex-col justify-between p-4 shadow-xl"
-    >
-      <div className="flex items-center justify-between z-10">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-xs font-bold text-white">
-          <Navigation className="w-3.5 h-3.5 text-blue-400 animate-spin" />
-          <span>Interactive VRP Vector Route Map (Chicago Depot)</span>
-        </div>
-        <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-          ● Live Telemetry Sync
-        </span>
-      </div>
-
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-        <div className="w-96 h-96 rounded-full border border-blue-500/40 animate-ping" />
-      </div>
-
-      <div className="z-10 flex items-end justify-between">
-        <div className="p-3 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[11px] space-y-1 text-slate-300">
-          <div className="flex items-center gap-2 font-bold text-white">
-            <MapPin className="w-3.5 h-3.5 text-rose-500" /> Depot: 41.8781° N, 87.6298° W
-          </div>
-          <div>Active Vehicles: 24 EVs • Optimized Stops: 142</div>
-        </div>
-      </div>
+    <div className="w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm relative">
+      <div ref={mapContainerRef} style={{ height }} className="w-full z-10" />
     </div>
   );
 }
