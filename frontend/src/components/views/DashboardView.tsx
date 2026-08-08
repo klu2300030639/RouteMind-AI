@@ -1,74 +1,228 @@
 'use client';
 
 import React from 'react';
-import { Activity, ShieldCheck, Zap, AlertTriangle, Truck } from 'lucide-react';
-import KpiCard from '../ui/KpiCard';
-import StatusBadge from '../ui/StatusBadge';
-import AiRecommendationCard from '../ui/AiRecommendationCard';
-import DataTable from '../ui/DataTable';
 import LeafletMap from '../maps/LeafletMap';
 
 export default function DashboardView() {
-  const routesData = [
-    { id: 'RT-101', driver: 'Elena Rostova', vehicle: 'EV-Van 04', status: 'In Transit', progress: '78%', eta: '14:20' },
-    { id: 'RT-102', driver: 'Carlos Mendez', vehicle: 'Diesel Heavy 02', status: 'Optimal', progress: '92%', eta: '15:05' },
-    { id: 'RT-103', driver: 'Marcus Vance', vehicle: 'EV-Van 01', status: 'Delayed', progress: '45%', eta: '16:45' },
-    { id: 'RT-104', driver: 'Aaliyah Chen', vehicle: 'EV-Van 08', status: 'Optimal', progress: '30%', eta: '17:10' },
-  ];
-
-  const columns = [
-    { header: 'Route ID', accessor: 'id' as const },
-    { header: 'Driver', accessor: 'driver' as const },
-    { header: 'Vehicle', accessor: 'vehicle' as const },
-    {
-      header: 'Status',
-      accessor: (item: any) => <StatusBadge status={item.status} />,
-    },
-    { header: 'Progress', accessor: 'progress' as const },
-    { header: 'ETA', accessor: 'eta' as const },
+  const activeRoutes = [
+    { id: 'RT-8802', driver: 'John Smith', initials: 'JS', bg: 'bg-blue-600', vehicle: 'TRK-442 (Van)', status: 'In Transit', color: 'emerald', eta: '14:30 EST' },
+    { id: 'RT-8803', driver: 'Alice Doe', initials: 'AD', bg: 'bg-amber-600', vehicle: 'TRK-109 (Heavy)', status: 'Delayed', color: 'amber', eta: '15:45 EST (+15m)' },
+    { id: 'RT-8804', driver: 'Marcus Reed', initials: 'MR', bg: 'bg-cyan-600', vehicle: 'TRK-299 (Van)', status: 'Loading', color: 'slate', eta: '--:--' },
   ];
 
   return (
     <div className="space-y-6">
+      {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Live Operations Dashboard</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time VRP route monitoring and automated dispatch overview</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Live Operations</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time overview of fleet performance and AI optimization status.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1.5" />
-            OR-Tools Engine Active
+
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-2" />
+            System Optimal
           </span>
+          <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 hover:bg-slate-50 transition cursor-pointer">
+            <span className="material-symbols-outlined text-[16px]">calendar_today</span>
+            <span>Today</span>
+            <span className="material-symbols-outlined text-[16px]">expand_more</span>
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard title="Active Routes" value="24 / 28" change="+12%" icon={<Truck className="w-5 h-5" />} subtitle="Vehicles on ground" />
-        <KpiCard title="On-Time Delivery" value="96.4%" change="+2.1%" icon={<ShieldCheck className="w-5 h-5" />} subtitle="Target > 95%" />
-        <KpiCard title="Fuel Saved (Today)" value="142.5 L" change="-18.4%" icon={<Zap className="w-5 h-5" />} subtitle="vs. Static Routing" />
-        <KpiCard title="Disruption Alerts" value="2 Active" change="High" icon={<AlertTriangle className="w-5 h-5" />} subtitle="Weather delay on I-90" />
+      {/* KPI Cards Row (6 Cards) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider">ACTIVE DELIVERIES</span>
+            <span className="material-symbols-outlined text-[18px] text-blue-500">local_shipping</span>
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-slate-100">1,248</div>
+          <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">+4.2% from avg</div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider">VEHICLES ONLINE</span>
+            <span className="material-symbols-outlined text-[18px] text-blue-500">directions_car</span>
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-slate-100">342 <span className="text-xs font-medium text-slate-400">/ 350</span></div>
+          <div className="text-[10px] font-bold text-slate-500 mt-1">97.7% Utilization</div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider">AVAILABLE DRIVERS</span>
+            <span className="material-symbols-outlined text-[18px] text-amber-500">person</span>
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-slate-100">28</div>
+          <div className="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-1">Nearing shift limit</div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider">FUEL SAVED</span>
+            <span className="material-symbols-outlined text-[18px] text-emerald-500">eco</span>
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-slate-100">412 gal</div>
+          <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">$1,420 est. value</div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider">ROUTES OPTIMIZED</span>
+            <span className="material-symbols-outlined text-[18px] text-blue-500">alt_route</span>
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-slate-100">86</div>
+          <div className="text-[10px] font-bold text-slate-500 mt-1">Last 24 hours</div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider">AI ALERTS</span>
+            <span className="material-symbols-outlined text-[18px] text-rose-500">notifications_active</span>
+          </div>
+          <div className="text-xl font-black text-rose-600 dark:text-rose-400">3</div>
+          <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 mt-1">Requires attention</div>
+        </div>
       </div>
 
+      {/* Middle Section: Live Fleet Map + AI Card & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <LeafletMap height="420px" />
+        {/* Map Container */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <span className="material-symbols-outlined text-blue-600">map</span>
+              <span>Live Fleet Topology</span>
+            </h3>
+            <div className="flex items-center gap-2">
+              <button className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 transition cursor-pointer">
+                <span className="material-symbols-outlined text-[18px]">filter_list</span>
+              </button>
+              <button className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 transition cursor-pointer">
+                <span className="material-symbols-outlined text-[18px]">layers</span>
+              </button>
+            </div>
+          </div>
+          <LeafletMap height="400px" />
         </div>
-        <div>
-          <AiRecommendationCard
-            title="Congestion Bypass Recommended"
-            description="Heavy traffic build-up detected near Sector 7. Re-routing RT-103 saves 24 minutes and 3.8L fuel."
-            impact="Saves 24 mins • $14.20 fuel"
-            confidence={94}
-            onAccept={() => alert('AI Recommendation Accepted! Route RT-103 re-routed via Bypass A-4.')}
-            onReject={() => alert('Recommendation dismissed.')}
-          />
+
+        {/* Right Side Cards */}
+        <div className="space-y-4">
+          {/* AI Recommendation Card */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <span className="material-symbols-outlined text-[20px]">smart_toy</span>
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-slate-100">Route Deviation Detected</h4>
+                <p className="text-[11px] text-slate-500">High confidence intervention recommended for Route NY-402.</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs space-y-1">
+              <div className="flex justify-between font-bold text-slate-800 dark:text-slate-200">
+                <span>Vehicle ID: TRK-882</span>
+                <span className="text-rose-600 font-extrabold">Traffic Incident</span>
+              </div>
+              <p className="text-slate-600 dark:text-slate-400 text-[11px]">Accident on I-95 South causing +45m delay. Rerouting via Route 1 saves 32m.</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button
+                onClick={() => alert('AI Reroute Approved! Vehicle TRK-882 re-routed.')}
+                className="py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center justify-center gap-1"
+              >
+                <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                <span>Approve Reroute</span>
+              </button>
+              <button
+                onClick={() => alert('Recommendation dismissed.')}
+                className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Actions 2x2 Grid */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+            <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Quick Actions</h4>
+            <div className="grid grid-cols-2 gap-2">
+              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+                <span className="material-symbols-outlined text-[22px] text-blue-600">person_add</span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Assign Driver</p>
+              </button>
+              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+                <span className="material-symbols-outlined text-[22px] text-blue-600">local_shipping</span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Dispatch Vehicle</p>
+              </button>
+              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+                <span className="material-symbols-outlined text-[22px] text-blue-600">description</span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Generate Report</p>
+              </button>
+              <button className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition text-center space-y-1 cursor-pointer">
+                <span className="material-symbols-outlined text-[22px] text-blue-600">support_agent</span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200">Contact Support</p>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">Live Active Telemetry</h3>
-        <DataTable data={routesData} columns={columns} />
+      {/* Bottom Table: Active Route Status */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100">Active Route Status</h3>
+          <a href="#" className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">View All Routes</a>
+        </div>
+
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 dark:bg-slate-950 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+              <tr>
+                <th className="px-4 py-3">ROUTE ID</th>
+                <th className="px-4 py-3">DRIVER</th>
+                <th className="px-4 py-3">VEHICLE</th>
+                <th className="px-4 py-3">STATUS</th>
+                <th className="px-4 py-3">ETA</th>
+                <th className="px-4 py-3 text-right">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              {activeRoutes.map((r, i) => (
+                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                  <td className="px-4 py-3.5 font-extrabold text-slate-900 dark:text-slate-100">{r.id}</td>
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-2 font-semibold">
+                      <div className={`w-6 h-6 rounded-full ${r.bg} text-white text-[10px] font-bold flex items-center justify-center`}>
+                        {r.initials}
+                      </div>
+                      <span>{r.driver}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3.5 font-medium text-slate-600 dark:text-slate-400">{r.vehicle}</td>
+                  <td className="px-4 py-3.5">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                      r.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                      r.color === 'amber' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-500/10 text-slate-500'
+                    }`}>
+                      ● {r.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3.5 font-bold text-slate-800 dark:text-slate-200">{r.eta}</td>
+                  <td className="px-4 py-3.5 text-right text-slate-400 cursor-pointer">
+                    <span className="material-symbols-outlined text-[18px]">more_vert</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
