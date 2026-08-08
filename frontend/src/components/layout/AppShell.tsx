@@ -1,22 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  LayoutDashboard,
-  Route,
-  Activity,
-  GitCompare,
-  Bot,
-  Zap,
-  TrendingUp,
-  FileSpreadsheet,
-  Settings,
-  LogOut,
-  Sun,
-  Moon,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
 import { NavTab } from '@/lib/types';
 
 interface AppShellProps {
@@ -41,103 +25,133 @@ export default function AppShell({
   const [collapsed, setCollapsed] = useState(false);
 
   const navItems = [
-    { id: 'dashboard' as NavTab, label: 'Command Dashboard', icon: LayoutDashboard },
-    { id: 'route-planner' as NavTab, label: 'Route Planner VRP', icon: Route },
-    { id: 'live-routes' as NavTab, label: 'Live Telemetry', icon: Activity },
-    { id: 'route-comparison' as NavTab, label: 'Route Audit', icon: GitCompare },
-    { id: 'ai-command' as NavTab, label: 'AI Control Center', icon: Bot },
-    { id: 'event-simulator' as NavTab, label: 'Disruption Sandbox', icon: Zap },
-    { id: 'ai-insights' as NavTab, label: 'AI ROI Insights', icon: TrendingUp },
-    { id: 'analytics' as NavTab, label: 'Fleet Analytics', icon: TrendingUp },
-    { id: 'reports' as NavTab, label: 'Reports & CSV', icon: FileSpreadsheet },
-    { id: 'settings' as NavTab, label: 'Dispatch Settings', icon: Settings },
+    { id: 'dashboard' as NavTab, label: 'Dashboard', icon: 'dashboard' },
+    { id: 'route-planner' as NavTab, label: 'Route Operations', icon: 'route' },
+    { id: 'live-routes' as NavTab, label: 'Live Telemetry', icon: 'sensors' },
+    { id: 'route-comparison' as NavTab, label: 'Route Comparison', icon: 'compare_arrows' },
+    { id: 'ai-command' as NavTab, label: 'AI Operations', icon: 'psychology' },
+    { id: 'event-simulator' as NavTab, label: 'Disruption Sandbox', icon: 'bolt' },
+    { id: 'ai-insights' as NavTab, label: 'AI ROI Insights', icon: 'trending_up' },
+    { id: 'analytics' as NavTab, label: 'Analytics', icon: 'leaderboard' },
+    { id: 'reports' as NavTab, label: 'Reports', icon: 'assessment' },
+    { id: 'settings' as NavTab, label: 'Settings', icon: 'settings' },
   ];
 
   return (
-    <div className={`min-h-screen ${isDark ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} flex transition-colors duration-200`}>
-      <aside className={`${collapsed ? 'w-20' : 'w-64'} bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 relative z-20`}>
-        <div className="p-4 flex items-center justify-between border-b border-slate-800">
-          {!collapsed && (
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-blue-600/30">
-                R
+    <div className={`min-h-screen flex ${isDark ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+      {/* Stitch SideNavBar */}
+      <aside className={`fixed left-0 top-0 h-full z-40 flex flex-col border-r transition-all duration-300 ${
+        collapsed ? 'w-20' : 'w-[280px]'
+      } bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800`}>
+        {/* Header */}
+        <div className="p-6 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+          {!collapsed ? (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-blue-600/30">
+                <span className="material-symbols-outlined fill text-2xl">route</span>
               </div>
               <div>
-                <h1 className="font-extrabold text-sm text-slate-100 tracking-tight leading-none">RouteMind AI</h1>
-                <span className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Enterprise VRP</span>
+                <h1 className="font-extrabold text-lg text-blue-600 dark:text-blue-400 tracking-tight leading-none">RouteMind</h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Enterprise Logistics</p>
               </div>
+            </div>
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white mx-auto">
+              <span className="material-symbols-outlined fill text-2xl">route</span>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer mx-auto"
+            className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 transition cursor-pointer hidden md:flex"
           >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            <span className="material-symbols-outlined">{collapsed ? 'chevron_right' : 'chevron_left'}</span>
           </button>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        {/* CTA Button */}
+        {!collapsed && (
+          <div className="p-4">
+            <button
+              onClick={() => setActiveTab('route-planner')}
+              className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 transition cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              <span>New Optimization</span>
+            </button>
+          </div>
+        )}
+
+        {/* Nav Links */}
+        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
-                    : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                 }`}
               >
-                <Icon className="w-4 h-4 shrink-0" />
+                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'fill' : ''}`}>{item.icon}</span>
                 {!collapsed && <span>{item.label}</span>}
               </button>
             );
           })}
         </nav>
 
-        <div className="p-3 border-t border-slate-800 space-y-2">
+        {/* Footer */}
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800 space-y-1">
           {!collapsed && (
-            <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
-              <p className="text-[11px] font-bold text-slate-200">{userRole}</p>
-              <p className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                ● Live Fleet Connected
+            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 mb-2">
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{userRole}</p>
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Live Fleet Connected
               </p>
             </div>
           )}
           <button
             onClick={onLogout}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/30 transition cursor-pointer"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
           >
-            <LogOut className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>Sign Out</span>}
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+            {!collapsed && <span>Log Out</span>}
           </button>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-10">
-          <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Control Center</span>
-            <h2 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 capitalize">
-              {activeTab.replace('-', ' ')}
-            </h2>
+      {/* Main Content Wrapper */}
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${collapsed ? 'md:ml-20' : 'md:ml-[280px]'}`}>
+        {/* Stitch TopNavBar */}
+        <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
+          {/* Search Bar on Left */}
+          <div className="flex-1 max-w-md relative">
+            <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+            <input
+              type="text"
+              placeholder="Search routes, vehicles, or drivers..."
+              className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
+          {/* Right Status Controls */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsDark(!isDark)}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer text-slate-600 dark:text-slate-300"
             >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+              <span className="material-symbols-outlined text-[20px]">{isDark ? 'light_mode' : 'dark_mode'}</span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/40 text-blue-400 flex items-center justify-center font-bold text-xs">
+            <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/40 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
               OP
             </div>
           </div>
         </header>
 
+        {/* Main View Container */}
         <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
