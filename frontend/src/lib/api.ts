@@ -10,14 +10,17 @@ export interface VrpSolveResponse {
   routes: Array<{ vehicle_id: string; stop_ids: string[]; distance: number }>;
 }
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://routemind-ai-xpe2.onrender.com';
+
 export const api = {
   solveVrp: async (data: VrpSolveRequest): Promise<VrpSolveResponse> => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/vrp/solve', {
+      const res = await fetch(`${BACKEND_URL}/api/vrp/solve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+      if (!res.ok) throw new Error('API Error');
       return await res.json();
     } catch {
       return { status: 'mocked', total_distance: 124.8, routes: [] };
